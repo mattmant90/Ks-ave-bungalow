@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PO Light — Wiring Diagram &amp; Troubleshooting Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#12151a; --panel:#1a1f26; --line:#2c333d; --text:#e6eaee; --muted:#8b96a3;
+    --amber:#e8a33d; --coral:#e8654f; --teal:#46b8a6; --gray:#3a4250; --purple:#a888e0;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;display:flex;flex-direction:column;align-items:center;padding:24px 12px 60px;}
+  h1{font-family:'Space Grotesk',sans-serif;font-size:19px;margin:0 0 6px;text-align:center;}
+  h2{font-family:'Space Grotesk',sans-serif;font-size:14.5px;margin:36px 0 4px;text-align:left;width:100%;max-width:720px;color:var(--purple);}
+  h3{font-family:'Space Grotesk',sans-serif;font-size:13px;margin:18px 0 8px;text-align:left;width:100%;max-width:720px;color:var(--amber);}
+  .sub{color:var(--muted);font-size:11.5px;width:100%;max-width:720px;text-align:left;margin:0 0 12px;line-height:1.6;}
+  p.lead{color:var(--muted);font-size:12px;text-align:center;max-width:580px;margin:0 0 6px;line-height:1.6;}
+  .disclaimer{width:100%;max-width:720px;margin:14px 0 6px;padding:10px 14px;background:#241a17;border:1px solid #4a2e24;border-radius:6px;color:#e8a08f;font-size:11.5px;line-height:1.6;}
+  .method{width:100%;max-width:720px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-top:8px;}
+  .method ul{margin:0;padding-left:18px;font-size:12px;line-height:1.9;color:var(--text);}
+  .method li b{color:var(--amber);}
+  svg{width:100%;max-width:720px;height:auto;background:var(--bg);}
+  .rail{stroke:var(--muted);stroke-width:1.5;}
+  .wire{stroke:var(--muted);stroke-width:1.3;fill:none;}
+  .sym{stroke:var(--text);stroke-width:1.4;fill:none;}
+  .symfill{fill:var(--panel);stroke:var(--text);stroke-width:1.2;}
+  .th{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:12.5px;fill:var(--text);}
+  .ts{font-family:'JetBrains Mono',monospace;font-size:10.5px;fill:var(--muted);}
+  .tsAmber{font-family:'JetBrains Mono',monospace;font-size:10.5px;fill:var(--amber);}
+  .tsCut{font-family:'JetBrains Mono',monospace;font-size:10.5px;fill:var(--coral);}
+
+  table{width:100%;max-width:720px;border-collapse:collapse;font-size:11px;margin-top:6px;}
+  th,td{border:1px solid var(--line);padding:8px 9px;text-align:left;vertical-align:top;line-height:1.5;}
+  th{background:var(--panel);color:var(--muted);font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.03em;}
+  td.name{color:var(--amber);font-weight:600;white-space:nowrap;}
+  tr.cut td{color:#e8a08f;}
+  .badge{display:inline-block;font-size:9.5px;padding:1px 6px;border-radius:10px;background:#4a2e24;color:#e8a08f;margin-left:6px;letter-spacing:.02em;}
+</style>
+</head>
+<body>
+<h1>PO light — wiring diagram &amp; troubleshooting guide</h1>
+<p class="lead">Built from your engineering prints and physical wire tags: the three wiring diagram sheets, plus contact-by-contact continuity and voltage checks for every point in the chain.</p>
+<div class="disclaimer"><b>Verify before use:</b> assembled from photos and prints across our conversation, not an original as-built drawing. Cross-check against the physical panel before doing any work.</div>
+
+<!-- ============ SHEET 1 ============ -->
+<h2>Sheet 1 — Power supervision logic</h2>
+<div class="sub">XPR relaxed (back contact closed) = AC present → energizes both POR coils → both front contacts pass in series → PO lamp lit.</div>
+<svg viewBox="0 0 660 380" role="img">
+<title>Power supervision ladder logic diagram</title>
+<desc>Two-rail ladder logic: the coil rung shows XPR's normally closed contact at terminal 21 feeding both the 1-POR and 2-POR relay coils in parallel, strapped together at terminal 11. The contact rung shows the 1-POR and 2-POR front contacts at terminal 5 in series, feeding the POK wire to WAGO terminal 20 plus and the PO lamp.</desc>
+
+<line class="rail" x1="60" y1="50" x2="60" y2="330"/>
+<text class="th" x="60" y="34" text-anchor="middle">MB / AA5+</text>
+<line class="rail" x1="600" y1="50" x2="600" y2="330"/>
+<text class="th" x="600" y="34" text-anchor="middle">MN return</text>
+
+<line class="wire" x1="60" y1="110" x2="150" y2="110"/>
+<line class="sym" x1="150" y1="98" x2="150" y2="122"/>
+<line class="sym" x1="176" y1="98" x2="176" y2="122"/>
+<line class="sym" x1="150" y1="122" x2="176" y2="98"/>
+<text class="ts" x="163" y="140" text-anchor="middle">XPR 21 (NC)</text>
+<text class="ts" x="163" y="152" text-anchor="middle">relaxed = closed</text>
+
+<line class="wire" x1="176" y1="110" x2="260" y2="110"/>
+<circle cx="260" cy="110" r="2.5" fill="var(--text)"/>
+<line class="wire" x1="260" y1="110" x2="260" y2="180"/>
+
+<line class="wire" x1="260" y1="110" x2="320" y2="110"/>
+<circle class="symfill" cx="344" cy="110" r="18"/>
+<path class="sym" d="M334,104 q5,-6 10,0 q5,6 10,0" fill="none"/>
+<text class="ts" x="344" y="140" text-anchor="middle">1-POR coil</text>
+<text class="ts" x="344" y="152" text-anchor="middle">term 11</text>
+<line class="wire" x1="362" y1="110" x2="600" y2="110"/>
+
+<line class="wire" x1="260" y1="180" x2="320" y2="180"/>
+<circle class="symfill" cx="344" cy="180" r="18"/>
+<path class="sym" d="M334,174 q5,-6 10,0 q5,6 10,0" fill="none"/>
+<text class="ts" x="344" y="210" text-anchor="middle">2-POR coil</text>
+<text class="ts" x="344" y="222" text-anchor="middle">term 11 (strapped)</text>
+<line class="wire" x1="362" y1="180" x2="600" y2="180"/>
+
+<line class="wire" x1="60" y1="280" x2="130" y2="280"/>
+<line class="sym" x1="130" y1="268" x2="130" y2="292"/>
+<line class="sym" x1="156" y1="268" x2="156" y2="292"/>
+<text class="ts" x="143" y="308" text-anchor="middle">1-POR 5 (NO)</text>
+
+<line class="wire" x1="156" y1="280" x2="200" y2="280"/>
+<line class="sym" x1="200" y1="268" x2="200" y2="292"/>
+<line class="sym" x1="226" y1="268" x2="226" y2="292"/>
+<text class="ts" x="213" y="308" text-anchor="middle">2-POR 5 (NO)</text>
+
+<line class="wire" x1="226" y1="280" x2="300" y2="280"/>
+<text class="tsAmber" x="300" y="270" text-anchor="middle">POK wire</text>
+
+<rect x="340" y="272" width="16" height="16" fill="none" class="sym"/>
+<line class="sym" x1="340" y1="272" x2="356" y2="288"/>
+<text class="ts" x="348" y="308" text-anchor="middle">WAGO 20+</text>
+<line class="wire" x1="300" y1="280" x2="340" y2="280"/>
+
+<line class="wire" x1="356" y1="280" x2="410" y2="280"/>
+<circle class="symfill" cx="432" cy="280" r="16"/>
+<line class="sym" x1="424" y1="272" x2="440" y2="288"/>
+<line class="sym" x1="440" y1="272" x2="424" y2="288"/>
+<text class="th" x="432" y="308" text-anchor="middle">PO LAMP</text>
+<line class="wire" x1="448" y1="280" x2="600" y2="280"/>
+</svg>
+
+<!-- ============ SHEET 2 ============ -->
+<h2>Sheet 2 — Charger AC feed circuits</h2>
+<div class="sub">Confirmed from physical wire tags on the MB and XB battery chargers.</div>
+<svg viewBox="0 0 680 540" role="img">
+<title>Charger AC feed circuits ladder diagram</title>
+<desc>Four vertical circuits: MB charger AC positive through breaker CB30A number 13 to POR-1 terminal B via wire 1-PO, MB charger AC negative to the neutral buss, XB charger AC positive through breaker CB30A number 11 to POR-2 terminal B via wire 2-PO, and XB charger AC negative to POR-2 terminal A via wire N2-PO.</desc>
+<line x1="90" y1="64" x2="90" y2="460" stroke="var(--muted)" stroke-width="1"/>
+<text class="ts" x="98" y="28">MB CHGR</text>
+<text class="th" x="98" y="44">AC+</text>
+<circle cx="90" cy="64" r="4" fill="none" stroke="var(--muted)"/>
+<circle cx="90" cy="180" r="2" fill="var(--muted)"/>
+<path d="M85 184 L95 184 L90 192 Z" fill="var(--muted)"/>
+<text class="ts" x="98" y="188">CB 30A #13</text>
+<text class="ts" x="98" y="404">#16</text>
+<rect x="83" y="452" width="14" height="14" fill="none" stroke="var(--muted)"/>
+<line x1="83" y1="452" x2="97" y2="466" stroke="var(--muted)" stroke-width="0.75"/>
+<text class="ts" x="98" y="489">1-PO</text>
+<text class="th" x="98" y="505">→ 1POR B</text>
+
+<line x1="260" y1="64" x2="260" y2="460" stroke="var(--muted)" stroke-width="1"/>
+<text class="ts" x="268" y="28">MB CHGR</text>
+<text class="th" x="268" y="44">AC-</text>
+<circle cx="260" cy="64" r="4" fill="none" stroke="var(--muted)"/>
+<text class="ts" x="268" y="404">#16</text>
+<rect x="253" y="452" width="14" height="14" fill="none" stroke="var(--muted)"/>
+<line x1="253" y1="452" x2="267" y2="466" stroke="var(--muted)" stroke-width="0.75"/>
+<text class="ts" x="268" y="489">NX110</text>
+<text class="th" x="268" y="505">→ NEUT BUSS</text>
+
+<line x1="430" y1="64" x2="430" y2="460" stroke="var(--muted)" stroke-width="1"/>
+<text class="ts" x="438" y="28">XB CHGR</text>
+<text class="th" x="438" y="44">AC+</text>
+<circle cx="430" cy="64" r="4" fill="none" stroke="var(--muted)"/>
+<circle cx="430" cy="180" r="2" fill="var(--muted)"/>
+<path d="M425 184 L435 184 L430 192 Z" fill="var(--muted)"/>
+<text class="ts" x="438" y="188">CB 30A #11</text>
+<text class="ts" x="438" y="404">#16</text>
+<rect x="423" y="452" width="14" height="14" fill="none" stroke="var(--muted)"/>
+<line x1="423" y1="452" x2="437" y2="466" stroke="var(--muted)" stroke-width="0.75"/>
+<text class="ts" x="438" y="489">2-PO</text>
+<text class="th" x="438" y="505">→ 2POR B</text>
+
+<line x1="600" y1="64" x2="600" y2="460" stroke="var(--muted)" stroke-width="1"/>
+<text class="ts" x="560" y="28">XB CHGR</text>
+<text class="th" x="560" y="44">AC-</text>
+<circle cx="600" cy="64" r="4" fill="none" stroke="var(--muted)"/>
+<text class="ts" x="560" y="404">#16</text>
+<rect x="593" y="452" width="14" height="14" fill="none" stroke="var(--muted)"/>
+<line x1="593" y1="452" x2="607" y2="466" stroke="var(--muted)" stroke-width="0.75"/>
+<text class="ts" x="560" y="489">N2-PO</text>
+<text class="th" x="560" y="505">→ 2POR A</text>
+</svg>
+
+<!-- ============ SHEET 3 ============ -->
+<h2>Sheet 3 — Lamp resistor block &amp; straps</h2>
+<div class="sub">Wire-wound resistors feeding the RG and RF mast lamps, with the straps tying them together, matching your wire tags exactly.</div>
+<svg viewBox="0 0 680 480" role="img">
+<title>Lamp resistor block and strap diagram</title>
+<desc>Four resistors: RG6 top and bottom, RG3 top, RF6 top and bottom, RF3 top, each feeding a mast lamp circuit, with three straps connecting them: RG6T POK-L XN to POK-R XN, RG6B LD45T to RF6B LD45T, and RF6B LD45T to RF6T XN POK which is documented as open.</desc>
+
+<line x1="90" y1="60" x2="90" y2="420" stroke="var(--muted)" stroke-width="1"/>
+<text class="ts" x="98" y="30">RG6B XN</text>
+<text class="th" x="98" y="46">LD45T</text>
+<circle cx="90" cy="60" r="4" fill="none" stroke="var(--muted)"/>
+<path class="sym" d="M84,150 q4,-8 6,0 t6,0 t6,0 t6,0" />
+<text class="ts" x="98" y="200">RG6 resistor</text>
+<line x1="90" y1="240" x2="90" y2="370"/>
+<rect x="83" y="366" width="14" height="14" fill="none" stroke="var(--muted)"/>
+<line x1="83" y1="366" x2="97" y2="380" stroke="var(--muted)" stroke-width="0.75"/>
+<text class="ts" x="98" y="405">RG6T POK-L XN</text>
+<text class="ts" x="98" y="420">RG6T POK-R XN</text>
+
+<line x1="250" y1="60" x2="250" y2="420" stroke="var(--muted)" stroke-width="1"/>
+<text class="ts" x="258" y="30">RG3T</text>
+<text class="th" x="258" y="46">POK-R / POK-L</text>
+<circle cx="250" cy="60" r="4" fill="none" stroke="var(--muted)"/>
+<path class="sym" d="M244,150 q4,-8 6,0 t6,0 t6,0 t6,0" />
+<text class="ts" x="258" y="200">RG3 resistor</text>
+<line x1="250" y1="240" x2="250" y2="370"/>
+<rect x="243" y="366" width="14" height="14" fill="none" stroke="var(--muted)"/>
+<line x1="243" y1="366" x2="257" y2="380" stroke="var(--muted)" stroke-width="0.75"/>
+<text class="ts" x="258" y="405">RG3B</text>
+<text class="th" x="258" y="420">1-POR 8</text>
+
+<line x1="420" y1="60" x2="420" y2="420" stroke="var(--muted)" stroke-width="1"/>
+<text class="ts" x="428" y="30">RF6B XN</text>
+<text class="th" x="428" y="46">LD45T</text>
+<circle cx="420" cy="60" r="4" fill="none" stroke="var(--muted)"/>
+<path class="sym" d="M414,150 q4,-8 6,0 t6,0 t6,0 t6,0" />
+<text class="ts" x="428" y="200">RF6 resistor</text>
+<line x1="420" y1="240" x2="420" y2="370"/>
+<rect x="413" y="366" width="14" height="14" fill="none" stroke="var(--muted)"/>
+<line x1="413" y1="366" x2="427" y2="380" stroke="var(--muted)" stroke-width="0.75"/>
+<text class="ts" x="428" y="405">RF6T XN</text>
+<text class="th" x="428" y="420">POK</text>
+
+<line x1="580" y1="60" x2="580" y2="420" stroke="var(--muted)" stroke-width="1"/>
+<text class="ts" x="540" y="30">RF3T</text>
+<text class="th" x="540" y="46">POK-S</text>
+<circle cx="580" cy="60" r="4" fill="none" stroke="var(--muted)"/>
+<path class="sym" d="M574,150 q4,-8 6,0 t6,0 t6,0 t6,0" />
+<text class="ts" x="540" y="200">RF3 resistor</text>
+<line x1="580" y1="240" x2="580" y2="370"/>
+<rect x="573" y="366" width="14" height="14" fill="none" stroke="var(--muted)"/>
+<line x1="573" y1="366" x2="587" y2="380" stroke="var(--muted)" stroke-width="0.75"/>
+<text class="ts" x="540" y="405">RF3B</text>
+<text class="th" x="540" y="420">2-POR 3</text>
+
+<line x1="90" y1="60" x2="420" y2="60" class="sym" stroke-dasharray="4 3"/>
+<circle cx="90" cy="60" r="3" fill="var(--teal)"/>
+<circle cx="420" cy="60" r="3" fill="var(--teal)"/>
+<text class="ts" x="255" y="76" text-anchor="middle" fill="var(--teal)">strap: RG6B ↔ RF6B (LD45T)</text>
+
+<line x1="420" y1="60" x2="420" y2="240" class="sym" stroke-dasharray="4 3" stroke="var(--coral)"/>
+<text class="tsCut" x="428" y="130">strap: RF6B ↔ RF6T</text>
+<text class="tsCut" x="428" y="142">documented OPEN</text>
+</svg>
+
+<!-- ============ TESTING METHOD ============ -->
+<h2>General testing method</h2>
+<div class="disclaimer"><b>Before continuity testing:</b> isolate or de-energize the circuit first. Checking continuity on a live circuit gives false readings and can damage the meter.</div>
+<div class="method">
+<ul>
+<li><b>Wire / strap / jumper:</b> should read near-zero Ω end to end. Anything above a few ohms means a loose crimp, corrosion, or a broken strand.</li>
+<li><b>Resistor:</b> should read a stable, non-zero resistance across its two terminals. <b>0 Ω = shorted/burned</b>. <b>OL / infinite = open, likely burnt out</b>.</li>
+<li><b>Relay contact:</b> near-zero Ω when the relay is in the state that should close that contact (picked for a front contact, relaxed for a back contact). Infinite when it should be closed means the contact isn't making up.</li>
+<li><b>Relay coil:</b> should read a fixed, non-zero resistance matching the relay's rating. 0 Ω or OL both indicate a bad coil.</li>
+<li><b>WAGO terminals:</b> probe the test port on top of the connector body, not the orange release lever. Backprobing at the adjoining screw terminal is a safer alternative.</li>
+<li><b>Voltage vs continuity:</b> voltage checks are done live and tell you if a point is carrying power right now. Continuity checks are done dead and tell you if the conductor itself is physically intact.</li>
+</ul>
+</div>
+
+<!-- ============ CONTACT TABLE ============ -->
+<h2>Contact-by-contact continuity and voltage checks</h2>
+<p class="lead">Work down this table in order. The first point that fails is where the fault lives.</p>
+<table>
+<tr><th>Contact point</th><th>Continuity (power OFF)</th><th>Expect</th><th>Voltage (power ON)</th><th>Expect</th></tr>
+<tr><td class="name">XPR contact<br>(term 21)</td><td>Lead A on XPR term 21, Lead B on the far end at 1-POR term 11. Disconnect one end first if possible.</td><td>Near-zero Ω when XPR relaxed. Open/OL when picked.</td><td>Red on XPR term 21, black on MN return.</td><td>Voltage present when relaxed; absent when picked.</td></tr>
+<tr><td class="name">Terminal 11<br>(coil feed)</td><td>Lead A at term 11, Lead B back at XPR term 21.</td><td>Near-zero Ω.</td><td>Red at term 11, black on MN return.</td><td>Coil-rated DC voltage present if XPR closed &amp; wire good.</td></tr>
+<tr><td class="name">1-POR coil</td><td>Across the coil's two terminals, isolated.</td><td>Stable non-zero Ω. 0 Ω = shorted. OL = open/burnt.</td><td>Red on coil+, black on coil-/MN.</td><td>Coil-rated voltage present; relay picked.</td></tr>
+<tr><td class="name">2-POR coil</td><td>Across the coil's two terminals, isolated.</td><td>Stable non-zero Ω. 0 Ω = shorted. OL = open/burnt.</td><td>Red on coil+, black on coil-/MN.</td><td>Coil-rated voltage present; relay picked.</td></tr>
+<tr><td class="name">1-POR contact<br>(term 5)</td><td>Across contact, relay held picked.</td><td>Near-zero Ω picked; open relaxed.</td><td>Red downstream side (toward 2-POR), black on MN.</td><td>Full upstream voltage passes when picked.</td></tr>
+<tr><td class="name">2-POR contact<br>(term 5)</td><td>Across contact, relay held picked.</td><td>Near-zero Ω picked; open relaxed.</td><td>Red downstream side (toward POK), black on MN.</td><td>Full upstream voltage passes when picked.</td></tr>
+<tr><td class="name">POK wire →<br>WAGO 20+</td><td>Lead A at 2-POR term 5 output, Lead B at WAGO 20+ test port.</td><td>Near-zero Ω.</td><td>Red at WAGO 20+ test port, black on MN.</td><td>Present if all above check out. If suspect, disconnect lamp and re-check.</td></tr>
+<tr><td class="name">PO lamp</td><td>Across lamp leads, disconnected.</td><td>Measurable resistance or diode reading; OL = burnt.</td><td>N/A — covered by WAGO 20+ check above.</td><td>N/A</td></tr>
+</table>
+
+<!-- ============ RESISTOR TABLE ============ -->
+<h2>Lamp resistor block &amp; straps</h2>
+<table>
+<tr><th>Element</th><th>Terminals</th><th>Check</th><th>Expect</th></tr>
+<tr><td class="name">RG3T resistor</td><td>Top: RG3T POK-R/POK-L<br>Bottom: RG3B/1-POR 8</td><td>Resistance top-to-bottom</td><td>Stable non-zero Ω</td></tr>
+<tr><td class="name">RG6T/B resistor</td><td>Top: RG6B XN/LD45T<br>Bottom: RG6T POK-L XN/POK-R XN</td><td>Resistance top-to-bottom</td><td>Stable non-zero Ω</td></tr>
+<tr><td class="name">RF6T/B resistor</td><td>Top: RF6B XN/LD45T<br>Bottom: RF6T XN POK</td><td>Resistance top-to-bottom</td><td>Stable non-zero Ω</td></tr>
+<tr><td class="name">RF3T resistor</td><td>Top: RF3T POK-S<br>Bottom: RF3B/2-POR 3</td><td>Resistance top-to-bottom</td><td>Stable non-zero Ω</td></tr>
+<tr><td class="name">Strap 1</td><td>RG6T POK-L XN ↔ POK-R XN</td><td>Continuity across shared leads</td><td>Near-zero Ω</td></tr>
+<tr><td class="name">Strap 2</td><td>RG6B XN/LD45T ↔ RF6B XN/LD45T</td><td>Continuity across the jumper</td><td>Near-zero Ω</td></tr>
+<tr class="cut"><td class="name">Strap 3 <span class="badge">should be open</span></td><td>RF6B XN/LD45T ↔ RF6T XN POK</td><td>Continuity across the jumper</td><td>Should read OPEN — documented as open. Continuous = unexpected, flag it.</td></tr>
+</table>
+
+<!-- ============ SPECIAL NOTES ============ -->
+<h2>Special notes</h2>
+<h3>WAGO 20+ appears to have voltage from the lamp side</h3>
+<p class="lead" style="text-align:left;max-width:720px;">A lamp cannot generate power and feed it backward into a dead circuit — it's a passive load. An apparent voltage reading here while upstream is confirmed dead is most often a meter ghost/phantom reading from induced voltage on a de-energized conductor bundled near live wires. Use a low-impedance (LoZ) meter setting if available. To confirm: disconnect the lamp from WAGO 20+ and re-check. Reading disappears → it was a ghost, real fault is upstream. Reading remains → the point does have real power and the fault is at the lamp itself.</p>
+<h3>Two wires of opposite polarity on the same terminal</h3>
+<p class="lead" style="text-align:left;max-width:720px;">Not normal practice — don't assume it's correct. Trace both wires back to their actual source before concluding it's a fault: the terminal may be a common tie point for same-polarity wires, or one wire may be a pass-through strap to another terminal rather than truly terminating there.</p>
+
+</body>
+</html>
